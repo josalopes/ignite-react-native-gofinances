@@ -1,37 +1,41 @@
 import styled, { css } from "styled-components/native";
-import { TouchableOpacity } from 'react-native';
+import { RectButton } from 'react-native-gesture-handler';
 import { Feather } from "@expo/vector-icons";
 import { RFValue } from "react-native-responsive-fontsize";
 
 interface IconProps {
-  type: 'up' | 'down';
+  type: 'positive' | 'negative';
 }
 
 interface ContainerProps {
-  type: 'up' | 'down';
+  type: 'positive' | 'negative';
   isActive: boolean;
 }
 
-export const Container = styled(TouchableOpacity)<ContainerProps>`
-  flex-direction: row;
-
+export const Container = styled.View<ContainerProps>`
   width: 48%;
   height: ${RFValue(56)}px;
+
   border-width: ${({ isActive }) => isActive ? 0 : 1.5}px; 
   border-style: solid ;
-  border-color: ${({ theme }) => theme.colors.text};
+  border-color: rgba(150, 156, 179, 0.2);
   border-radius: 5px;
   
-  padding-left: 18px;
-  align-items: center;
-
-  ${({ isActive, type }) => isActive && type === 'up' && css`
-    background-color: : ${({ theme }) => theme.colors.success_light};
+  ${({ isActive, type }) => isActive && type === 'positive' && css`
+  background-color: : ${({ theme }) => theme.colors.success_light};
   `}
   
-  ${({ isActive, type }) => isActive && type === 'down' && css`
-    background-color: : ${({ theme }) => theme.colors.attention_light};
+  ${({ isActive, type }) => isActive && type === 'negative' && css`
+  background-color: : ${({ theme }) => theme.colors.attention_light};
   `}
+  `;
+
+export const Button = styled(RectButton)`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  padding-left: 16px;
 `;
 
 export const Icon = styled(Feather)<IconProps>`
@@ -39,7 +43,7 @@ export const Icon = styled(Feather)<IconProps>`
   margin-right: 14px;
 
   color: ${({ theme, type }) => 
-    type === 'up' ? theme.colors.success : theme.colors.attention};
+    type === 'positive' ? theme.colors.success : theme.colors.attention};
 
 `;
 

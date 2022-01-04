@@ -1,6 +1,10 @@
 import React from 'react';
+import { StatusBar } from 'react-native'
+import 'intl';
+import 'intl/locale-data/jsonp/pt-BR';
 import { ThemeProvider } from 'styled-components';
 import AppLoading from 'expo-app-loading';
+import { NavigationContainer } from '@react-navigation/native';
 
 import {
   useFonts,
@@ -10,9 +14,7 @@ import {
 } from '@expo-google-fonts/poppins';
 
 import theme from './src/global/styles/theme';
-import { Dashboard } from './src/screens/Dashboard';
-import { Register } from './src/screens/Register';
-
+import { AppRoutes } from './src/routes/app.routes';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -22,13 +24,18 @@ export default function App() {
   })
 
   if (!fontsLoaded) {
-    return <AppLoading />
+    return (
+    <AppLoading 
+    />
+    )
   }
 
   return (
     <ThemeProvider theme={theme}>
-      {/* <Dashboard /> */}
-      <Register />
+      <NavigationContainer>
+        <StatusBar barStyle="light-content"/>
+        <AppRoutes />
+      </NavigationContainer>
     </ThemeProvider>
   )
 }
