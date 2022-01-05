@@ -3,8 +3,10 @@ import { StatusBar } from 'react-native'
 import 'intl';
 import 'intl/locale-data/jsonp/pt-BR';
 import { ThemeProvider } from 'styled-components';
-import AppLoading from 'expo-app-loading';
 import { NavigationContainer } from '@react-navigation/native';
+import AppLoading from 'expo-app-loading';
+
+import { SignIn } from './src/screens/SignIn';
 
 import {
   useFonts,
@@ -34,7 +36,8 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <NavigationContainer>
         <StatusBar barStyle="light-content"/>
-        <AppRoutes />
+        <SignIn />
+        {/* <AppRoutes /> */}
       </NavigationContainer>
     </ThemeProvider>
   )
