@@ -2,8 +2,10 @@
   "name": "gofinances",
   "displayName": "gofinances",
   "expo": {
+    "owner": "josafa",
     "name": "gofinances",
     "slug": "gofinances",
+    "schema": "gofinances",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
