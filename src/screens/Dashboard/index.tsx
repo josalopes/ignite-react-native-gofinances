@@ -7,6 +7,7 @@ import { useTheme } from 'styled-components';
 import { HighlightCard } from '../../components/HighlightCard';
 import { TransactionCard, TransactionCardProps } from '../../components/TransactionCard';
 
+import { useAuth } from '../../hooks/auth';
 
 import { 
   Container, 
@@ -25,6 +26,7 @@ import {
   LogoutButton,
   LoadContainer
 } from './styles';
+
 import theme from '../../global/styles/theme';
 
 export interface DataListProps extends TransactionCardProps {
@@ -47,6 +49,7 @@ export function Dashboard() {
   const [data, setData] = useState<DataListProps[]>([]);
   const [highlightData, setHighlightData] = useState<HighlightData>({} as HighlightData);
   const theme = useTheme();
+  const { signOut, user } = useAuth();
 
   function getLastTransactionDate(
     collection: DataListProps[], 
@@ -54,7 +57,15 @@ export function Dashboard() {
     ) {
         const lastTransaction = new Date(Math.max.apply(Math, collection
           .filter(transaction => transaction.type === type)
-          .map(transaction => new Date(transaction.date).getTime())))
+          .map(transaction => new Date(transaction.date).getTime())));
+        
+          // if (isNaN(lastTransaction.getTime())) {
+          //   console.log('data inválida');
+          // }else {
+          //   console.log('data válida');
+          //   console.log(lastTransaction);
+          // }
+
         return lastTransaction;  
     }
 
@@ -62,6 +73,9 @@ export function Dashboard() {
       const dataKey = '@gofinances:transactions';
       const response = await AsyncStorage.getItem(dataKey);
       const transactions = response ? JSON.parse(response) : [];
+
+      // console.log(transactions);
+      // await AsyncStorage.removeItem(dataKey);
 
       let entriesTotal = 0;
       let expensesTotal = 0;
@@ -116,13 +130,13 @@ export function Dashboard() {
           style: 'currency',
           currency: 'BRL'
         });
-
+      
       const lastIncome = getLastTransactionDate(transactions, 'positive');
       const lastExpense = getLastTransactionDate(transactions, 'negative');
-
+      
       const lastIncomeFormatted = `Última entrada dia ${lastIncome.getDate()} de ${lastIncome.toLocaleString(
         'pt-BR', { month: 'long' })}`
-      
+    
       const lastExpenseFormatted = `Última entrada dia ${lastExpense.getDate()} de ${lastExpense.toLocaleString(
       'pt-BR', { month: 'long' })}`
       
@@ -141,13 +155,15 @@ export function Dashboard() {
         balance: balanceFormatted,
         totalInterval
       });
+      
+
 
       setIsLoading(false);
     }
 
-    useEffect(() => {
-      loadTransactions();
-    },[]);
+    // useEffect(() => {
+    //   loadTransactions();
+    // },[]);
 
     useFocusEffect(useCallback(() => {  
       loadTransactions();
@@ -167,14 +183,15 @@ export function Dashboard() {
         <Header>
           <UserWrapper>
             <UserInfo>
-              <Photo source={{ uri: 'https://avatars.githubusercontent.com/u/7139440?v=4'}} />
+              <Photo source={{ uri: user.photo }} />
+              {/* <Photo source={{ uri: 'https://avatars.githubusercontent.com/u/7139440?v=4'}} /> */}
               <User>
                 <UserGreeting>Olá,</UserGreeting>
-                <UserName>Josafá</UserName>
+                <UserName>{user.name}</UserName>
               </User>
             </UserInfo>
 
-            <LogoutButton onPress={() => {}}>
+            <LogoutButton onPress={signOut}>
               <Icon name="power"/>
             </LogoutButton>
           </UserWrapper>
