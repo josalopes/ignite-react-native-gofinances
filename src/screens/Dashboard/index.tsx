@@ -55,27 +55,22 @@ export function Dashboard() {
     collection: DataListProps[], 
     type: 'positive' | 'negative'
     ) {
-        const lastTransaction = new Date(Math.max.apply(Math, collection
-          .filter(transaction => transaction.type === type)
-          .map(transaction => new Date(transaction.date).getTime())));
+        const filteredCollection = collection
+          .filter(transaction => transaction.type === type);
+          
+        if (filteredCollection.length === 0) 
+          return 0;
         
-          // if (isNaN(lastTransaction.getTime())) {
-          //   console.log('data inválida');
-          // }else {
-          //   console.log('data válida');
-          //   console.log(lastTransaction);
-          // }
-
-        return lastTransaction;  
+        const lastTransaction = new Date(Math.max.apply(Math, filteredCollection
+          .map(transaction => new Date(transaction.date).getTime())));
+          
+        return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleString('pt-BR', { month: 'long' })}`
     }
 
     async function loadTransactions() {
-      const dataKey = '@gofinances:transactions';
+      const dataKey = `@gofinances:transactions_user:${user.id}`;
       const response = await AsyncStorage.getItem(dataKey);
       const transactions = response ? JSON.parse(response) : [];
-
-      // console.log(transactions);
-      // await AsyncStorage.removeItem(dataKey);
 
       let entriesTotal = 0;
       let expensesTotal = 0;
@@ -134,26 +129,24 @@ export function Dashboard() {
       const lastIncome = getLastTransactionDate(transactions, 'positive');
       const lastExpense = getLastTransactionDate(transactions, 'negative');
       
-      const lastIncomeFormatted = `Última entrada dia ${lastIncome.getDate()} de ${lastIncome.toLocaleString(
-        'pt-BR', { month: 'long' })}`
+      const lastIncomeFormatted = `Última entrada dia ${lastIncome}`
     
-      const lastExpenseFormatted = `Última entrada dia ${lastExpense.getDate()} de ${lastExpense.toLocaleString(
-      'pt-BR', { month: 'long' })}`
+      const lastExpenseFormatted = `Última saída dia ${lastExpense}`
       
-      const totalInterval = `01 a ${lastIncome.getDate()} de ${lastIncome.toLocaleString(
-      'pt-BR', { month: 'long' })}`
+      const totalInterval = `01 a ${lastIncome}`
 
       setHighlightData({
         entries: {
           total: entriesTotalFormatted,
-          lastTransaction: lastIncomeFormatted
+          lastTransaction: lastIncome === 0 ? 'Não há transações' : `Última entrada dia ${lastIncome}`
+          // lastTransaction: lastIncomeFormatted
         },
         expenses: {
           total: expensesTotalFormatted,
-          lastTransaction: lastExpenseFormatted
+          lastTransaction: lastExpense === 0 ? 'Não há transações' : `Última saída dia ${lastExpense}`
         },
         balance: balanceFormatted,
-        totalInterval
+        totalInterval: lastExpense === 0 ? 'Não há transações' : `01 a ${lastExpense}`
       });
       
 

@@ -23,6 +23,7 @@ import {
 import { categories } from '../../utils/categories';
 import { HistoryCard } from '../../components/HistoryCard';
 import theme from '../../global/styles/theme';
+import { useAuth } from '../../hooks/auth';
 
 interface TransactionData {
   type: 'positive' | 'negative';
@@ -46,6 +47,8 @@ export function Summary() {
   const [selectedDate, setSelectedDate] = useState(new Date);
   const [totalByCategories, setTotalByCategories] = useState<TotalProps[]>([]);
 
+  const { user } = useAuth();
+  
   function handleDateChange(action: 'next' | 'prev') {
     if (action === 'next') {
       setSelectedDate(addMonths(selectedDate, 1));
@@ -56,7 +59,7 @@ export function Summary() {
 
   async function loadData() {
     setIsLoading(true);
-    const dataKey = '@gofinances:transactions';
+    const dataKey = `@gofinances:transactions_user:${user.id}`;
     const response = await AsyncStorage.getItem(dataKey);
     const responseFormatted = response ? JSON.parse(response) : [];
 
